@@ -4,6 +4,7 @@ The Official Repository for the ZNotes App<br>
 The induvidual repos can be visited at:<br>
 https://github.com/F0RG-2142/znotes-frontend-2<br>
 https://github.com/F0RG-2142/znotes-backend<br>
+https://github.com/F0RG-2142/LogVanguard (a log analyser for the future)<br>
 
 I will be creating a local installer in the future for self hosting.<br>
 And now, the _flavor text_:<br>
