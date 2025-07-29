@@ -2,7 +2,7 @@
 The Official Repository for the ZNotes App<br>
 
 The induvidual repos can be visited at:<br>
-https://github.com/F0RG-2142/znotes-frontend-2<br>
+https://github.com/F0RG-2142/znotes-frontend<br>
 https://github.com/F0RG-2142/znotes-backend<br>
 https://github.com/F0RG-2142/LogVanguard (log analyser planned)<br>
 https://github.com/F0RG-2142/znotes-mobile (mobile app planned)<br>
