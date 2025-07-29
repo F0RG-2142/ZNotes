@@ -11,6 +11,8 @@ I will be creating a local installer in the future for self hosting.<br>
 And now, the _flavor text_:<br>
 
 ## Why I decided to make this
+I just want a notes app that has everything that I need and nothing that I don't need.<br>
+So ultimately I made it for ease of use for myself.
 
 ## Current WIP Installation Guide
 
