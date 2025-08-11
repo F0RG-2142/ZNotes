@@ -1,79 +1,61 @@
 package installers
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
-func InstallBackendLinux() {
-	var dir string
-	//get install directory
-	fmt.Print("Enter install directory: ")
-	fmt.Scanln(&dir)
-	//where latest backend releases will be put
-	releaseUrl := "https://github.com/F0RG-2142/znotes-backend/releases/download/latest/api-server-linux-amd64"
-	//get latest release
-	resp, err := http.Get(releaseUrl)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
+func InstallBackendLinux(dir string, postgresDir string) {
+	dir = strings.Trim(dir, " ") + "/backend"
+	binaryURL := "https://github.com/F0RG-2142/znotes-backend/releases/download/latest/api-server-linux-amd64"
 
-	var release struct {
-		Assets []struct {
-			BrowserDownloadURL string `json:"browser_download_url"`
-			Name               string `json:"name"`
-		} `json:"assets"`
-	}
+	// what to save it as
+	fileName := "backend-server-linux-amd64"
+	outPath := filepath.Join(dir, fileName)
 
-	if err := json.NewDecoder(resp.Body).Decode(&release); err != nil {
-		panic(err)
-	}
-
-	if len(release.Assets) != 1 {
-		panic("expected exactly one asset in release")
-	}
-
-	url := release.Assets[0].BrowserDownloadURL
-	name := release.Assets[0].Name
-
-	// download
-	outPath := filepath.Join(dir, name)
+	// create file
 	out, err := os.Create(outPath)
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("failed to create file: %w", err))
 	}
 	defer out.Close()
 
-	fileResp, err := http.Get(url)
+	//downld binary
+	resp, err := http.Get(binaryURL)
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("failed to download binary: %w", err))
 	}
-	defer fileResp.Body.Close()
+	defer resp.Body.Close()
 
-	if _, err := io.Copy(out, fileResp.Body); err != nil {
-		panic(err)
+	if resp.StatusCode != http.StatusOK {
+		panic(fmt.Errorf("download failed: status %s", resp.Status))
 	}
 
-	// make it executable
-	os.Chmod(outPath, 0755)
+	//write binary to disk
+	if _, err := io.Copy(out, resp.Body); err != nil {
+		panic(fmt.Errorf("failed to save binary: %w", err))
+	}
+	if err := os.Chmod(outPath, 0755); err != nil {
+		panic(fmt.Errorf("failed to chmod file: %w", err))
+	}
 
-	// create .env
+	//create env file
 	envPath := filepath.Join(dir, ".env")
 	env, err := os.Create(envPath)
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("failed to create .env: %w", err))
 	}
 	defer env.Close()
-	env.WriteString("APP_PORT=8080\nAPP_ENV=production\n")
 
-	fmt.Println("Installed", name, "to", dir)
+	fmt.Fprintf(env, "DB_URL=%s\n", postgresDir)
+
+	fmt.Println("Installed", fileName, "to", dir)
 }
 
 func InstallBackendWindows() {
-	
+
 }
