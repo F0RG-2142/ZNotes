@@ -16,6 +16,4 @@ func SetupLinuxEnv() {
 
 	go installers.InstallBackendLinux(dir, postgresDir)
 	go installers.InstallFrontendLinux(dir)
-
-	//and then doe .env setups
 }

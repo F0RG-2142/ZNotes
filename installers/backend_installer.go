@@ -1,6 +1,7 @@
 package installers
 
 import (
+	"crypto/rand"
 	"fmt"
 	"io"
 	"net/http"
@@ -43,6 +44,10 @@ func InstallBackendLinux(dir string, postgresDir string) {
 		panic(fmt.Errorf("failed to chmod file: %w", err))
 	}
 
+	key, err := generateSecureKey()
+	if err != nil {
+
+	}
 	//create env file
 	envPath := filepath.Join(dir, ".env")
 	env, err := os.Create(envPath)
@@ -51,11 +56,22 @@ func InstallBackendLinux(dir string, postgresDir string) {
 	}
 	defer env.Close()
 
-	fmt.Fprintf(env, "DB_URL=%s\n", postgresDir)
+	fmt.Fprintf(env, "DB_URL=%s\nGOOSE_DRIVER=postgres\nGOOSE_DBSTRING=%s\nJWT_SECRET=%s", postgresDir, postgresDir, key)
+
+	//add GOOSE_MIGRATION_DIR=./sql/schema/
 
 	fmt.Println("Installed", fileName, "to", dir)
 }
 
 func InstallBackendWindows() {
 
+}
+
+func generateSecureKey() (string, error) {
+	key := make([]byte, 32)
+	_, err := rand.Read(key)
+	if err != nil {
+		return "", fmt.Errorf("error reading random bytes: %w", err)
+	}
+	return string(key), nil
 }
