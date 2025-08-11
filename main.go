@@ -1,31 +1,30 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"net/http"
 	"runtime"
-	"github.com/F0RG/ZNotes/setup_env"
+
+	"github.com/F0RG-2142/ZNotes/setup_env"
 )
 
 func main() {
-	err, platform := detectPlatform()
+	platform, err := detectPlatform()
 	if err != nil {
-		fmt.Errorf("Error: %v", err)
+		fmt.Printf("Error: %v\n", err)
+		return
 	}
 	if platform == "Windows" {
 		setup_env.SetupWindowsEnv()
 	} else {
-		setup_env.setupLinuxEnv()
+		setup_env.SetupLinuxEnv()
 	}
 }
-
-func detectPlatform() (error, string) {
+func detectPlatform() (string, error) {
 	if runtime.GOOS == "windows" && runtime.GOARCH == "arm64" {
-		return nil, "Windows"
+		return "Windows", nil
 	} else if runtime.GOOS == "linux" && runtime.GOARCH == "arm64" {
-		return nil, "Linux"
+		return "Linux", nil
 	} else {
-		return fmt.Errorf("Operating System Not Supported"), ""
+		return "", fmt.Errorf("operating system not supported")
 	}
 }
